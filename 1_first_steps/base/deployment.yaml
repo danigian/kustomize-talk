@@ -1,0 +1,48 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: some-application
+  labels:
+    app: some-application
+spec:
+  selector:
+    matchLabels:
+      app: some-application
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: some-application
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: VAR_0
+          value: "Y"
+        - name: VAR_1
+          valueFrom:
+            configMapKeyRef:
+              name: some-configmap
+              key: VAR_1
+        - name: VAR_2
+          valueFrom:
+            configMapKeyRef:
+              name: some-configmap
+              key: VAR_2
+        - name: SECRET_1
+          valueFrom:
+            secretKeyRef:
+              name: some-secret
+              key: SECRET_1
+      restartPolicy: Always
+---
