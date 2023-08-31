@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+
+namespace: namespaceB
+
+namePrefix: b-
+
+images:
+  - name: nginx
+    newName: someregistryforB/nginx
+
+configMapGenerator:
+- name: some-configmap
+  behavior: merge
+  envs:
+  - config.env
+
+patches:
+- patch: |-
+    apiVersion: external-secrets.io/v1beta1
+    kind: SecretStore
+    metadata:
+      name: azurekeyvaultstore
+    spec:
+      provider:
+        azurekv:
+          vaultUrl: https://bkvinthecloud.vault.azure.net

@@ -1,0 +1,33 @@
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: azurekeyvaultstore
+spec:
+  provider:
+    azurekv:
+      tenantId: "tenantguid"
+      vaultUrl: "https://thiswillbeoverwritten.vault.azure.net"
+      authSecretRef:
+        clientId:
+          name: keyvault-secret  #Kubernetes secret name in which ClientID is stored. Not part of the kustomize deployment
+          key: ClientID
+        clientSecret:
+          name: keyvault-secret
+          key: ClientSecret
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: some-secret
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: azurekeyvaultstore
+  target:
+    name: some-secret
+    creationPolicy: Owner
+  data:
+  - secretKey: SECRET_1
+    remoteRef:
+      key: SECRET_NAME_IN_AKV

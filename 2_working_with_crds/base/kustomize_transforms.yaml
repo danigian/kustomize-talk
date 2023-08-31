@@ -1,0 +1,21 @@
+# To understand more about the nameReference transformation
+# https://github.com/kubernetes-sigs/kustomize/blob/master/examples/transformerconfigs/README.md#name-reference-transformer
+nameReference:
+- kind: SecretStore
+  fieldSpecs:
+    - path: spec/secretStoreRef/name
+      kind: ExternalSecret
+- kind: Secret
+  fieldSpecs:
+    - path: spec/provider/azurekv/authSecretRef/clientSecret/name
+      kind: SecretStore
+    - path: spec/provider/azurekv/authSecretRef/clientId/name
+      kind: SecretStore
+- kind: ExternalSecret
+  fieldSpecs:
+    - path: spec/template/spec/containers/env/valueFrom/secretKeyRef/name
+      kind: Deployment
+    - path: spec/template/spec/containers/envFrom/secretRef/name
+      kind: Deployment
+    - path: spec/target/name
+      kind: ExternalSecret
