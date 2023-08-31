@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+
+namespace: namespaceA
+
+# Three different patches (first two following json 6902 standard, last using the strategic merge)
+# Two of them working, one not (find which)
+
+# patches:
+# - target:
+#     version: v1
+#     kind: Deployment
+#     name: limited-deployment
+#   patch: |-
+#     - op: add
+#       path: /spec/template/spec/nodeSelector
+#       value: 
+#         example.com/nodelabel2: "anothervalue"
+
+# patches:
+# - target:
+#     version: v1
+#     kind: Deployment
+#     name: limited-deployment
+#   patch: |-
+#     - op: add
+#       path: /spec/template/spec/nodeSelector/example.com~1nodelabel2
+#       value: "anothervalue"
+
+# patches:
+# - patch: |-
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     metadata:
+#       name: limited-deployment
+#     spec:
+#       template:
+#         spec:
+#           nodeSelector:
+#             example.com/nodelabel2: "anothervalue"
+
+# Last two patches show wrong and correct usage of patch6902 for adding to an array
+
+# patches:
+# - target:
+#     version: v1
+#     kind: Deployment
+#     name: limited-deployment
+#   patch: |-
+#     - op: add
+#       path: /spec/template/spec/containers            # This is wrong
+#       value: {"name": "asd", "image": "asd:1.0.0"}
+
+# patches:
+# - target:
+#     version: v1
+#     kind: Deployment
+#     name: limited-deployment
+#   patch: |-
+#     - op: add
+#       path: /spec/template/spec/containers/-          # This is right and it's appending
+#       value: {"name": "asd", "image": "asd:1.0.0"}
